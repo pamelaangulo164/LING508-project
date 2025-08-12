@@ -1,0 +1,12 @@
+﻿services:
+  mysql:
+    image: mysql:8.0
+    container_name: medical-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: medical
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d
+    command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
