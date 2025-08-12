@@ -68,7 +68,7 @@ class Meaning:
 
 @dataclass(slots=True)
 class Example:
-    language: str  # "en" or "es"
+    language: str  
     text: str
     meaning_id: UUID
     example_id: UUID = field(default_factory=uuid4, init=False)
