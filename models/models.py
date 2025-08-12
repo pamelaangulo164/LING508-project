@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import List
+from uuid import UUID, uuid4
 
 
 class PartOfSpeech(Enum):
@@ -22,53 +22,53 @@ class Gender(Enum):
 class EnglishTerm:
     term: str
     pos: PartOfSpeech
-    term_id: uuid.UUID = field(default_factory=uuid.uuid4, init=False)
-    meanings: List["Meaning"] = field(default_factory=list, init=False)
+    term_id: UUID = field(default_factory=uuid4, init=False)
+    # Associations are by ID (no embedded objects)
+    meaning_ids: List[UUID] = field(default_factory=list, init=False)
 
-    def add_meaning(self, meaning: "Meaning") -> None:
-        if meaning.english_term is not self:
-            raise ValueError("Meaning.english_term must reference this EnglishTerm")
-        self.meanings.append(meaning)
-
-
-@dataclass(slots=True)
-class Meaning:
-    description: str
-    english_term: EnglishTerm
-    meaning_id: uuid.UUID = field(default_factory=uuid.uuid4, init=False)
-    spanish_terms: List["SpanishTerm"] = field(default_factory=list, init=False)
-    examples: List["Example"] = field(default_factory=list, init=False)
-
-    def add_spanish_term(self, term: "SpanishTerm") -> None:
-        if term.meaning is not self:
-            raise ValueError("SpanishTerm.meaning must reference this Meaning")
-        self.spanish_terms.append(term)
-
-    def add_example(self, example: "Example") -> None:
-        if example.meaning is not self:
-            raise ValueError("Example.meaning must reference this Meaning")
-        self.examples.append(example)
+    def add_meaning_id(self, meaning_id: UUID) -> None:
+        if meaning_id not in self.meaning_ids:
+            self.meaning_ids.append(meaning_id)
 
 
 @dataclass(slots=True)
 class SpanishTerm:
     term: str
     gender: Gender
-    meaning: Meaning
-    term_id: uuid.UUID = field(default_factory=uuid.uuid4, init=False)
+    term_id: UUID = field(default_factory=uuid4, init=False)
+    # A Spanish term may map to one or more meanings
+    meaning_ids: List[UUID] = field(default_factory=list, init=False)
 
-    def __post_init__(self) -> None:
-        if self not in self.meaning.spanish_terms:
-            self.meaning.spanish_terms.append(self)
+    def add_meaning_id(self, meaning_id: UUID) -> None:
+        if meaning_id not in self.meaning_ids:
+            self.meaning_ids.append(meaning_id)
+
+
+@dataclass(slots=True)
+class Meaning:
+    description: str
+    meaning_id: UUID = field(default_factory=uuid4, init=False)
+    # References to related terms by ID
+    english_term_ids: List[UUID] = field(default_factory=list, init=False)
+    spanish_term_ids: List[UUID] = field(default_factory=list, init=False)
+    example_ids: List[UUID] = field(default_factory=list, init=False)
+
+    def add_english_term_id(self, term_id: UUID) -> None:
+        if term_id not in self.english_term_ids:
+            self.english_term_ids.append(term_id)
+
+    def add_spanish_term_id(self, term_id: UUID) -> None:
+        if term_id not in self.spanish_term_ids:
+            self.spanish_term_ids.append(term_id)
+
+    def add_example_id(self, example_id: UUID) -> None:
+        if example_id not in self.example_ids:
+            self.example_ids.append(example_id)
 
 
 @dataclass(slots=True)
 class Example:
-    language: str 
+    language: str  # "en" or "es"
     text: str
-    meaning: Meaning
-    example_id: uuid.UUID = field(default_factory=uuid.uuid4, init=False)
-
-    def __post_init__(self) -> None:
-        if self not in self.meaning.examples:
-            self.meaning.examples.append(self)
+    meaning_id: UUID
+    example_id: UUID = field(default_factory=uuid4, init=False)
