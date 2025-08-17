@@ -1,6 +1,6 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Iterable         
 from uuid import UUID
 from models import EnglishTerm, Meaning, SpanishTerm, Example
 
@@ -22,6 +22,16 @@ class Repository(ABC):
     @abstractmethod
     def link_meaning_spanish(self, meaning_id: UUID, spanish_term_id: UUID) -> None: ...
 
-    # NEW: test helper / cleanup
+ 
+    @abstractmethod
+    def persist_entry_graph(
+        self,
+        english: EnglishTerm,
+        meaning: Meaning,
+        spanish: SpanishTerm,
+        examples: Iterable[Example],
+    ) -> None: ...
+
+
     @abstractmethod
     def delete_entry_by_english_lemma(self, lemma: str) -> None: ...
