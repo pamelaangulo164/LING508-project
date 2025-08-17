@@ -30,6 +30,13 @@ class EnglishTerm:
         if meaning.english_term is not self:
             raise ValueError("Meaning.english_term must reference this EnglishTerm")
         self.meanings.append(meaning)
+    def to_dict(self) -> dict:
+    return {
+        "term_id": str(self.term_id),
+        "term": self.term,
+        "pos": self.pos.value,
+        "meanings": [m.to_dict() for m in self.meanings],
+    }
 
 
 @dataclass(slots=True)
@@ -50,6 +57,15 @@ class Meaning:
             raise ValueError("Example.meaning must reference this Meaning")
         self.examples.append(example)
 
+    def to_dict(self) -> dict:
+    return {
+        "meaning_id": str(self.meaning_id),
+        "description": self.description,
+        "english_term_id": str(self.english_term_id) if hasattr(self, "english_term_id") else None,
+        "spanish_terms": [t.to_dict() for t in self.spanish_terms],
+        "examples": [e.to_dict() for e in self.examples],
+    }
+
 
 @dataclass(slots=True)
 class SpanishTerm:
@@ -61,7 +77,14 @@ class SpanishTerm:
     def __post_init__(self) -> None:
         if self not in self.meaning.spanish_terms:
             self.meaning.spanish_terms.append(self)
-
+            
+    def to_dict(self) -> dict:
+    return {
+        "term_id": str(self.term_id),
+        "term": self.term,
+        "gender": self.gender.value,
+        "meaning_id": str(self.meaning_id),
+    }
 
 @dataclass(slots=True)
 class Example:
@@ -73,3 +96,11 @@ class Example:
     def __post_init__(self) -> None:
         if self not in self.meaning.examples:
             self.meaning.examples.append(self)
+            
+def to_dict(self) -> dict:
+    return {
+        "example_id": str(self.example_id),
+        "language": self.language,
+        "text": self.text,
+        "meaning_id": str(self.meaning_id),
+    }
