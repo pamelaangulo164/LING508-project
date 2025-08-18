@@ -1,34 +1,43 @@
-# Bilingual Medical Dictionary – API
+# Bilingual Medical Dictionary — API Documentation
 
 **Base URL:** `http://127.0.0.1:8000/api/v1`  
-**Auth:** none (local dev)  
+**Authentication:** none (local development)  
 **Content-Type:** `application/json; charset=utf-8`
 
 ---
 
 ## Endpoints
 
-### GET `/lookup`
-Lookup an existing English lemma.
+### 1) GET `/lookup`
 
-**Query params**
+Looks up an existing English lemma and returns its entry.
+
+**Query parameters**
 - `english` (string, required): the English lemma to look up.
 
-**Response 200**
-```json
-{
-  "english_term": "lesion",
-  "pos": "noun",
-  "meanings": [
-    {
-      "description": "Pathological change; abnormal tissue",
-      "spanish_terms": [
-        {"term": "lesión", "gender": "f"}
-      ],
-      "examples": [
-        {"language": "en", "text": "The MRI showed a brain lesion."},
-        {"language": "es", "text": "La resonancia mostró una lesión cerebral."}
-      ]
-    }
-  ]
-}
+**Responses**
+
+- **200 OK**
+  ```json
+  {
+    "english_term": "lesion",
+    "pos": "noun",
+    "meanings": [
+      {
+        "description": "Pathological change; abnormal tissue",
+        "spanish_terms": [
+          { "term": "lesión", "gender": "f" }
+        ],
+        "examples": [
+          { "language": "en", "text": "The MRI showed a brain lesion." },
+          { "language": "es", "text": "La resonancia mostró una lesión cerebral." }
+        ]
+      }
+    ]
+  }
+  
+**400 Bad Request**
+{"error":"missing ?english=..."}
+
+**404 Not Found**
+{"error":"not found"}
