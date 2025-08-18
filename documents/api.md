@@ -44,3 +44,25 @@ Looks up an existing English lemma and returns its entry.
 
 **cURL:**
 curl "http://127.0.0.1:8000/api/v1/lookup?english=lesion"
+
+### 2) POST `/add`
+
+Creates a new entry: one English term, one meaning, one Spanish term, plus examples.
+
+**Request body (JSON)**
+- `lemma` (string) – English term, e.g. `"bruise"`
+- `pos` (string) – one of: `"noun" | "verb" | "adj" | "adv"`
+- `meaning` (string) – definition/description
+- `spanish_term` (string) – Spanish equivalent
+- `gender` (string) – `"m" | "f" | "n"`
+- `examples` (array of `[language, text]`) – optional
+
+**Example**
+```json
+{
+  "lemma": "contusion",
+  "pos": "noun",
+  "meaning": "Injury causing discoloration of the skin",
+  "spanish_term": "contusión",
+  "gender": "f",
+  "examples": [["en","He had a contusion."], ["es","Tuvo una contusión."]]
