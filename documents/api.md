@@ -41,3 +41,6 @@ Looks up an existing English lemma and returns its entry.
 
 **404 Not Found**
 {"error":"not found"}
+
+**cURL:**
+curl "http://127.0.0.1:8000/api/v1/lookup?english=lesion"
