@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, request
 from services.service import DictionaryService
+from db.repository import Repository
 
 def create_app():
     app = Flask(__name__)
-    service = DictionaryService()
+    repo = Repository()
+    service = DictionaryService(repo)
 
     @app.route("/api/v1/health", methods=["GET"])
     def health_check():
@@ -13,8 +15,8 @@ def create_app():
     def lookup():
         english = request.args.get("english")
         if not english:
-            return jsonify({"error": "missing ?english=..."}), 400
-        entry = service.lookup(english)
+            return jsonify({"error": "missing ?english=..."})
+        entry = service.lookup_english_as_dict(english)
         if entry:
             return jsonify(entry)
         else:
@@ -23,27 +25,30 @@ def create_app():
     @app.route("/api/v1/add", methods=["POST"])
     def add():
         data = request.get_json()
-        required_fields = ["english", "spanish", "pos", "category"]
+        required_fields = ["lemma", "pos", "meaning_desc", "spanish_term", "gender"]
         if not all(field in data for field in required_fields):
             return jsonify({"error": "invalid payload"}), 400
-        success = service.add_entry(
-            data["english"],
-            data["spanish"],
-            data["pos"],
-            data["category"]
-        )
-        return jsonify({"result": "ok" if success else "error"})
+        try:
+            entry = service.add_entry_as_dict(
+                lemma=data["lemma"],
+                pos=data["pos"],
+                meaning_desc=data["meaning_desc"],
+                spanish_term=data["spanish_term"],
+                gender=data["gender"],
+                examples=data.get("examples", [])
+            )
+            return jsonify(entry)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
-    @app.route("/english-lesson", methods=["GET"])
+    @app.route("/api/v1/english-lesson", methods=["GET"])
     def get_english_lesson():
         try:
-        service = DictionaryService()
-        lesson = service.get_english_lesson()  
-        
-        return jsonify(lesson)
-    except Exception as e:
-        print("Error:", e)  
-        return jsonify({"error": "server error"}), 500
+            lesson = service.get_english_lesson()
+            return jsonify(lesson)
+        except Exception as e:
+            print("Error:", e)
+            return jsonify({"error": "server error"}), 500
 
     return app
 
