@@ -96,3 +96,13 @@ class DictionaryService:
     ) -> Dict[str, Any]:
         et = self.add_entry(lemma, pos, meaning_desc, spanish_term, gender, examples)
         return self.serialize_entry(et)
+
+    def get_english_lesson(self) -> dict:
+        return {
+        "lesson_title": "Basic Medical Terms",
+        "terms": [
+            {"english": "fever", "spanish": "fiebre", "pos": "noun"},
+            {"english": "cough", "spanish": "tos", "pos": "noun"},
+            {"english": "headache", "spanish": "dolor de cabeza", "pos": "noun"},
+            ]
+        }
