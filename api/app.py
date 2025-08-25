@@ -34,6 +34,17 @@ def create_app():
         )
         return jsonify({"result": "ok" if success else "error"})
 
+    @app.route("/english-lesson", methods=["GET"])
+    def get_english_lesson():
+        try:
+        service = DictionaryService()
+        lesson = service.get_english_lesson()  
+        
+        return jsonify(lesson)
+    except Exception as e:
+        print("Error:", e)  
+        return jsonify({"error": "server error"}), 500
+
     return app
 
 if __name__ == "__main__":
