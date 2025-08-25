@@ -2,53 +2,46 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import List
-from uuid import UUID, uuid4
+from uuid import uuid4, UUID
 
-
-class PartOfSpeech(str, Enum):
+class PartOfSpeech(Enum):
     NOUN = "noun"
     VERB = "verb"
     ADJ  = "adj"
+    ADV  = "adv"
 
-class Gender(str, Enum):
+class Gender(Enum):
     MASCULINE = "m"
     FEMININE  = "f"
+    NEUTER    = "n"
+    COMMON    = "c"
 
 @dataclass
 class EnglishTerm:
     term: str
     pos: PartOfSpeech
     term_id: UUID = field(default_factory=uuid4)
-    meanings: List["Meaning"] = field(default_factory=list, init=False)
+    meanings: List["Meaning"] = field(default_factory=list)
 
     def add_meaning(self, meaning: "Meaning") -> None:
-        self.meanings.append(meaning)
+        if meaning not in self.meanings:
+            self.meanings.append(meaning)
 
 @dataclass
 class Meaning:
     description: str
     english_term: EnglishTerm
     meaning_id: UUID = field(default_factory=uuid4)
-    spanish_terms: List["SpanishTerm"] = field(default_factory=list, init=False)
-    examples: List["Example"] = field(default_factory=list, init=False)
+    spanish_terms: List["SpanishTerm"] = field(default_factory=list)
+    examples: List["Example"] = field(default_factory=list)
 
-    def __post_init__(self) -> None:
-        self.english_term.add_meaning(self)
-
-    def add_spanish_term(self, term: "SpanishTerm") -> None:
-        self.spanish_terms.append(term)
+    def add_spanish_term(self, st: "SpanishTerm") -> None:
+        if st not in self.spanish_terms:
+            self.spanish_terms.append(st)
 
     def add_example(self, ex: "Example") -> None:
-        self.examples.append(ex)
-
-    def to_dict(self) -> dict:
-        return {
-            "description": self.description,
-            "spanish_terms": [
-                {"term": s.term, "gender": s.gender.value} for s in self.spanish_terms
-            ],
-            "examples": [{"language": e.language, "text": e.text} for e in self.examples],
-        }
+        if ex not in self.examples:
+            self.examples.append(ex)
 
 @dataclass
 class SpanishTerm:
@@ -57,15 +50,29 @@ class SpanishTerm:
     meaning: Meaning
     term_id: UUID = field(default_factory=uuid4)
 
-    def __post_init__(self) -> None:
-        self.meaning.add_spanish_term(self)
-
 @dataclass
 class Example:
-    language: str   
+    language: str
     text: str
     meaning: Meaning
     example_id: UUID = field(default_factory=uuid4)
 
-    def __post_init__(self) -> None:
-        self.meaning.add_example(self)
+def serialize_entry(et: EnglishTerm) -> dict:
+    return {
+        "english_term": et.term,
+        "pos": et.pos.value,
+        "meanings": [
+            {
+                "description": m.description,
+                "spanish_terms": [
+                    {"term": st.term, "gender": st.gender.value}
+                    for st in m.spanish_terms
+                ],
+                "examples": [
+                    {"language": ex.language, "text": ex.text}
+                    for ex in m.examples
+                ],
+            }
+            for m in et.meanings
+        ],
+    }
