@@ -147,7 +147,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/add   -H "Content-Type: application/js
 
 ## Example Use Case
 
-A medical professional or student wants to look up the word "fever" to see its Spanish translation and example sentences. Learning what part of speech the word belongs to and gender categorization is also necessary for correct use.
+A medical professional, student, or translator wants to look up the word "fever" to see its Spanish translation and example sentences. Learning what part of speech the word belongs to and gender categorization is also necessary for correct use.
 
 ```
 curl http://127.0.0.1:8000/api/v1/lookup?english=fever
