@@ -1,12 +1,12 @@
-# 🧾 Bilingual Medical Dictionary API
+# Bilingual Medical Dictionary API
 
 This project is a bilingual medical dictionary designed for interpreters and healthcare professionals, supporting English-to-Spanish terminology with example sentences, part of speech information, and more.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### 🔧 Requirements
+### Requirements
 
 - **Python 3.11+**
 - **Docker** and **Docker Compose** (for database)
@@ -14,9 +14,9 @@ This project is a bilingual medical dictionary designed for interpreters and hea
 
 ---
 
-### 🐳 Run with Docker
+### Run with Docker
 
-```bash
+```
 docker-compose up --build
 ```
 
@@ -24,43 +24,42 @@ This launches a MySQL database container.
 
 ---
 
-### ▶️ Run the Flask API Server
+### Run the Flask API Server
 
-```bash
-# From project root
+```
 $env:PYTHONPATH="."
 $env:FLASK_APP="api.app"
 python -m flask run --port 8000
 ```
 
-This runs your API at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+This runs the API at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ---
 
-## 🌐 API Documentation
+## API Documentation
 
-### ✅ `/api/v1/health`  
+### `/api/v1/health`  
 **Method**: `GET`  
 **Description**: Health check endpoint  
 **Response**:
-```json
+```
 { "status": "ok" }
 ```
 
 ---
 
-### 🔍 `/api/v1/lookup?english=fever`  
+### `/api/v1/lookup?english=fever`  
 **Method**: `GET`  
 **Query Param**:  
 - `english` – the English word to look up
 
 **Example**:
-```bash
+```
 curl http://127.0.0.1:8000/api/v1/lookup?english=fever
 ```
 
 **Success Response**:
-```json
+```
 {
   "term": "fever",
   "pos": "noun",
@@ -70,17 +69,17 @@ curl http://127.0.0.1:8000/api/v1/lookup?english=fever
 ```
 
 **Error**:
-```json
+```
 { "error": "not found" }
 ```
 
 ---
 
-### ➕ `/api/v1/add`  
+### `/api/v1/add`  
 **Method**: `POST`  
 **Content-Type**: `application/json`  
 **Payload**:
-```json
+```
 {
   "lemma": "fever",
   "pos": "noun",
@@ -95,27 +94,27 @@ curl http://127.0.0.1:8000/api/v1/lookup?english=fever
 ```
 
 **Example curl**:
-```bash
+```
 curl -X POST http://127.0.0.1:8000/api/v1/add   -H "Content-Type: application/json"   -d '{...}'
 ```
 
 **Success Response**:
-```json
+```
 { "term": "fever", ... }
 ```
 
 **Error Response**:
-```json
+```
 { "error": "invalid payload" }
 ```
 
 ---
 
-### 📚 `/api/v1/english-lesson`  
+### `/api/v1/english-lesson`  
 **Method**: `GET`  
 **Description**: Returns a small English lesson of common medical terms  
 **Response**:
-```json
+```
 {
   "lesson_title": "Basic Medical Terms",
   "terms": [
@@ -128,7 +127,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/add   -H "Content-Type: application/js
 
 ---
 
-## 📄 Project Structure
+## Project Structure
 
 ```
 /api
@@ -146,10 +145,10 @@ curl -X POST http://127.0.0.1:8000/api/v1/add   -H "Content-Type: application/js
 
 ---
 
-## 🧪 Example Use Case
+## Example Use Case
 
-A medical interpreter wants to look up the word "fever" to see its translation, part of speech, and example sentences.
+A medical professional or student wants to look up the word "fever" to see its Spanish translation and example sentences. Learning what part of speech the word belongs to and gender categorization is also necessary for correct use.
 
-```bash
+```
 curl http://127.0.0.1:8000/api/v1/lookup?english=fever
 ```
