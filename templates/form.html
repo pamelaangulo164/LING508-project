@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Dictionary Entry</title>
+</head>
+<body>
+    <h1>Add a New Medical Term</h1>
+    <form id="entryForm">
+        <label for="lemma">English Term:</label>
+        <input type="text" id="lemma" name="lemma" required><br><br>
+
+        <label for="pos">Part of Speech:</label>
+        <select id="pos" name="pos" required>
+            <option value="noun">Noun</option>
+            <option value="verb">Verb</option>
+            <option value="adjective">Adjective</option>
+        </select><br><br>
+
+        <label for="meaning_desc">Meaning Description:</label>
+        <input type="text" id="meaning_desc" name="meaning_desc" required><br><br>
+
+        <label for="spanish_term">Spanish Term:</label>
+        <input type="text" id="spanish_term" name="spanish_term" required><br><br>
+
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="masculine">Masculine</option>
+            <option value="feminine">Feminine</option>
+        </select><br><br>
+
+        <button type="submit">Add Entry</button>
+    </form>
+
+    <p id="response"></p>
+
+    <script>
+        document.getElementById("entryForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const payload = {
+                lemma: document.getElementById("lemma").value,
+                pos: document.getElementById("pos").value,
+                meaning_desc: document.getElementById("meaning_desc").value,
+                spanish_term: document.getElementById("spanish_term").value,
+                gender: document.getElementById("gender").value
+            };
+
+            fetch("http://127.0.0.1:8000/api/v1/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").textContent = JSON.stringify(data);
+            })
+            .catch(error => {
+                document.getElementById("response").textContent = "Error: " + error;
+            });
+        });
+    </script>
+</body>
+</html>
